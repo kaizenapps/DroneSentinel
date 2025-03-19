@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let mediaStream = null;
     let analyser = null;
     let canvasCtx = null;
+    let levelCtx = null;
     let animationFrame = null;
 
     // UI Elements
@@ -18,6 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const alertBox = document.getElementById('alertBox');
     const logContent = document.getElementById('logContent');
     const spectrogramCanvas = document.getElementById('spectrogram');
+    const levelCanvas = document.getElementById('levelMeter');
 
     function addLog(message, type = 'info') {
         const logEntry = document.createElement('div');
@@ -28,46 +30,69 @@ document.addEventListener('DOMContentLoaded', function() {
         logContent.scrollTop = logContent.scrollHeight;
     }
 
-    // Initialize spectrogram
-    function initSpectrogram() {
-        canvasCtx = spectrogramCanvas.getContext('2d');
-        analyser.fftSize = 2048;
-        const bufferLength = analyser.frequencyBinCount;
-        const dataArray = new Uint8Array(bufferLength);
+    // Initialize visualizations
+    function initVisualizations() {
+        // Initialize level meter
+        levelCtx = levelCanvas.getContext('2d');
+        levelCanvas.width = levelCanvas.offsetWidth;
+        levelCanvas.height = levelCanvas.offsetHeight;
 
-        // Set canvas dimensions
+        // Initialize spectrogram
+        canvasCtx = spectrogramCanvas.getContext('2d');
         spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
         spectrogramCanvas.height = spectrogramCanvas.offsetHeight;
 
-        canvasCtx.clearRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
-        canvasCtx.fillStyle = 'rgb(0, 0, 0)';
-        canvasCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+        // Configure analyser
+        analyser.fftSize = 2048;
+        analyser.smoothingTimeConstant = 0.8;
+        analyser.minDecibels = -90;
+        analyser.maxDecibels = -10;
 
-        function drawSpectrogram() {
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function draw() {
             if (!isListening) return;
+            animationFrame = requestAnimationFrame(draw);
 
-            animationFrame = requestAnimationFrame(drawSpectrogram);
+            // Update level meter
+            analyser.getByteTimeDomainData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const amplitude = (dataArray[i] - 128) / 128;
+                sum += amplitude * amplitude;
+            }
+            const rms = Math.sqrt(sum / bufferLength);
+            const level = Math.min(1, rms * 5); // Amplify the level for better visibility
+
+            levelCtx.fillStyle = 'rgb(0, 0, 0)';
+            levelCtx.fillRect(0, 0, levelCanvas.width, levelCanvas.height);
+            levelCtx.fillStyle = `hsl(${120 - level * 120}, 100%, 50%)`; // Green to red
+            levelCtx.fillRect(0, 0, levelCanvas.width * level, levelCanvas.height);
+
+            // Update spectrogram
             analyser.getByteFrequencyData(dataArray);
-
-            // Scroll the existing spectrogram left
             const imageData = canvasCtx.getImageData(1, 0, spectrogramCanvas.width - 1, spectrogramCanvas.height);
             canvasCtx.putImageData(imageData, 0, 0);
 
-            // Draw new column
             for (let i = 0; i < bufferLength; i++) {
                 const value = dataArray[i];
                 const y = Math.floor((i / bufferLength) * spectrogramCanvas.height);
                 const intensity = value / 255;
-
-                // Use a color gradient from blue (low intensity) to red (high intensity)
-                const hue = (1 - intensity) * 240; // 240 is blue, 0 is red
+                const hue = (1 - intensity) * 240;
                 canvasCtx.fillStyle = `hsl(${hue}, 100%, ${intensity * 50}%)`;
                 canvasCtx.fillRect(spectrogramCanvas.width - 1, spectrogramCanvas.height - y, 1, 1);
             }
         }
 
-        drawSpectrogram();
-        addLog('Spectrogram visualization initialized');
+        // Clear canvases
+        levelCtx.fillStyle = 'rgb(0, 0, 0)';
+        levelCtx.fillRect(0, 0, levelCanvas.width, levelCanvas.height);
+        canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+        canvasCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+
+        draw();
+        addLog('Audio visualizations initialized');
     }
 
     async function startListening() {
@@ -80,12 +105,6 @@ document.addEventListener('DOMContentLoaded', function() {
             analyser = audioContext.createAnalyser();
             const processor = audioContext.createScriptProcessor(1024, 1, 1);
 
-            // Configure analyser
-            analyser.smoothingTimeConstant = 0.8;
-            analyser.minDecibels = -90;
-            analyser.maxDecibels = -10;
-
-            // Connect nodes in sequence
             source.connect(analyser);
             analyser.connect(processor);
             processor.connect(audioContext.destination);
@@ -97,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             startTime = Date.now();
             updateUptime();
-            initSpectrogram();
+            initVisualizations();
 
             // Update UI
             isListening = true;
@@ -128,8 +147,12 @@ document.addEventListener('DOMContentLoaded', function() {
             cancelAnimationFrame(animationFrame);
         }
 
-        // Clear canvas
-        if (canvasCtx) {
+        // Clear canvases
+        if (levelCtx && canvasCtx) {
+            levelCtx.clearRect(0, 0, levelCanvas.width, levelCanvas.height);
+            levelCtx.fillStyle = 'rgb(0, 0, 0)';
+            levelCtx.fillRect(0, 0, levelCanvas.width, levelCanvas.height);
+
             canvasCtx.clearRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
             canvasCtx.fillStyle = 'rgb(0, 0, 0)';
             canvasCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);

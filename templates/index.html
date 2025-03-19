@@ -22,7 +22,6 @@
             </div>
 
             <div class="bg-gray-800 rounded-lg p-6 mb-8">
-                <!-- Centered Listen Button -->
                 <div class="flex justify-center mb-8">
                     <button id="listenBtn" class="bg-blue-600 hover:bg-blue-700 px-8 py-4 rounded-lg text-xl flex items-center">
                         <span class="material-icons mr-2">mic</span>
@@ -30,7 +29,11 @@
                     </button>
                 </div>
 
-                <!-- Spectrogram Visualization -->
+                <div class="bg-gray-700 rounded-lg p-4 mb-4">
+                    <h3 class="text-xl mb-4">Audio Level</h3>
+                    <canvas id="levelMeter" width="800" height="60" class="w-full h-16 bg-gray-900 rounded-lg"></canvas>
+                </div>
+
                 <div class="bg-gray-700 rounded-lg p-4 mb-8">
                     <h3 class="text-xl mb-4">Audio Spectrogram</h3>
                     <canvas id="spectrogram" width="800" height="200" class="w-full h-48 bg-gray-900 rounded-lg"></canvas>
@@ -65,7 +68,6 @@
                 </div>
             </div>
 
-            <!-- System Logs Section -->
             <div class="bg-gray-800 rounded-lg p-6 mb-8">
                 <h2 class="text-2xl font-bold mb-4 flex items-center">
                     <span class="material-icons mr-2">article</span>
@@ -76,7 +78,6 @@
                 </div>
             </div>
 
-            <!-- Alert Box -->
             <div id="alertBox" class="hidden bg-red-600 rounded-lg p-6 text-center">
                 <h2 class="text-2xl font-bold mb-2">⚠️ ALERT</h2>
                 <p id="alertText" class="text-xl">Drone Detected!</p>
