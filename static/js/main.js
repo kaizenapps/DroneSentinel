@@ -34,7 +34,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const bufferLength = analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
 
+        // Set canvas dimensions
+        spectrogramCanvas.width = spectrogramCanvas.offsetWidth;
+        spectrogramCanvas.height = spectrogramCanvas.offsetHeight;
+
         canvasCtx.clearRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+        canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+        canvasCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
 
         function drawSpectrogram() {
             if (!isListening) return;
@@ -49,10 +55,13 @@ document.addEventListener('DOMContentLoaded', function() {
             // Draw new column
             for (let i = 0; i < bufferLength; i++) {
                 const value = dataArray[i];
-                const y = spectrogramCanvas.height - (i / bufferLength) * spectrogramCanvas.height;
+                const y = Math.floor((i / bufferLength) * spectrogramCanvas.height);
                 const intensity = value / 255;
-                canvasCtx.fillStyle = `hsl(${240 - intensity * 240}, 100%, ${intensity * 100}%)`;
-                canvasCtx.fillRect(spectrogramCanvas.width - 1, y, 1, 2);
+
+                // Use a color gradient from blue (low intensity) to red (high intensity)
+                const hue = (1 - intensity) * 240; // 240 is blue, 0 is red
+                canvasCtx.fillStyle = `hsl(${hue}, 100%, ${intensity * 50}%)`;
+                canvasCtx.fillRect(spectrogramCanvas.width - 1, spectrogramCanvas.height - y, 1, 2);
             }
         }
 
@@ -125,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const hours = Math.floor(diff / 3600000);
             const minutes = Math.floor((diff % 3600000) / 60000);
             const seconds = Math.floor((diff % 60000) / 1000);
-            uptimeText.textContent = 
+            uptimeText.textContent =
                 `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             setTimeout(updateUptime, 1000);
         }
