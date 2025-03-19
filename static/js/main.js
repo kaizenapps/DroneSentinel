@@ -109,7 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error('Error accessing microphone:', error);
             addLog('Error accessing microphone: ' + error.message, 'error');
-            alert('Error accessing microphone. Please ensure microphone permissions are granted.');
+            if (error.name === 'NotAllowedError') {
+                addLog('Please ensure microphone permissions are granted in your browser settings', 'warning');
+            }
         }
     }
 
@@ -209,4 +211,5 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Initial log
     addLog('System initialized');
+    addLog('Note: For best audio visualization support, Firefox is recommended. Chrome users may experience limited functionality.', 'warning');
 });

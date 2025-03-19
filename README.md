@@ -48,14 +48,16 @@ graph TD
 ## 📱 Compatible Devices
 
 The system works on any device with:
-- A modern web browser
+- A modern web browser (Firefox recommended for best audio visualization)
 - Microphone access
 - Internet connection
 
 Tested platforms:
-- 💻 Desktop (Chrome, Firefox, Safari)
+- 💻 Desktop (Firefox recommended, Chrome has limited visualization support)
 - 📱 Mobile devices
 - 🎯 Edge devices with microphone capabilities
+
+> **Note**: For optimal audio visualization, we recommend using Firefox. You can download it [here](https://www.mozilla.org/firefox/new/). Chrome users may experience limited functionality with the spectrogram visualization.
 
 ## 🛠️ Installation
 
@@ -144,9 +146,10 @@ Key improvements:
 ## 📚 References
 
 1. [Web Audio API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API)
-2. [PyTorch Audio Processing](https://pytorch.org/audio/stable/index.html)
-3. [Flask-SocketIO Documentation](https://flask-socketio.readthedocs.io/)
-4. [Tailwind CSS](https://tailwindcss.com/)
+2. [Canvas API Documentation](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
+3. [PyTorch Audio Processing](https://pytorch.org/audio/stable/index.html)
+4. [Flask-SocketIO Documentation](https://flask-socketio.readthedocs.io/)
+5. [Tailwind CSS](https://tailwindcss.com/)
 
 ## 📄 License
 
