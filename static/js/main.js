@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize spectrogram
     function initSpectrogram() {
         canvasCtx = spectrogramCanvas.getContext('2d');
-        analyser = audioContext.createAnalyser();
         analyser.fftSize = 2048;
         const bufferLength = analyser.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
@@ -66,8 +65,10 @@ document.addEventListener('DOMContentLoaded', function() {
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 
             const source = audioContext.createMediaStreamSource(mediaStream);
+            analyser = audioContext.createAnalyser();
             const processor = audioContext.createScriptProcessor(1024, 1, 1);
 
+            // Connect nodes in sequence
             source.connect(analyser);
             analyser.connect(processor);
             processor.connect(audioContext.destination);
