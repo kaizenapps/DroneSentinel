@@ -1,6 +1,6 @@
 # 🎯 DroneSentinel - Drone Audio Detection System
 
-> Developed by [KaizenApps.com](https://KaizenApps.com) for [KaizenLabs.uk](https://KaizenLabs.uk)
+> Developed by [KaizenApps.com](https://KaizenApps.com) for [KaizenLabs.uk](https://KaizenLabs.uk) and Satern R&D Labs
 
 ## 🌟 Overview
 
