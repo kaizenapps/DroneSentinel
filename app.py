@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 UPLOAD_FOLDER = 'uploads'
 MODEL_FOLDER = os.path.join(UPLOAD_FOLDER, 'models')
 AUDIO_FOLDER = os.path.join(UPLOAD_FOLDER, 'audio')
-ALLOWED_MODEL_EXTENSIONS = {'tflite', 'onnx'}
+ALLOWED_MODEL_EXTENSIONS = {'tflite', 'onnx', 'pt', 'pth'}
 ALLOWED_AUDIO_EXTENSIONS = {'wav', 'mp3', 'ogg'}
 
 # Create upload directories if they don't exist
@@ -33,6 +33,10 @@ def allowed_file(filename, allowed_extensions):
 def index():
     return render_template('index.html')
 
+@app.route('/admin')
+def admin():
+    return render_template('admin.html')
+
 @app.route('/upload_model', methods=['POST'])
 def upload_model():
     try:
@@ -40,18 +44,103 @@ def upload_model():
             return jsonify({"status": "error", "message": "No model file provided"}), 400
 
         file = request.files['model']
+        model_type = request.form.get('type', '')
+
         if file.filename == '':
             return jsonify({"status": "error", "message": "No selected file"}), 400
 
         if file and allowed_file(file.filename, ALLOWED_MODEL_EXTENSIONS):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(MODEL_FOLDER, filename))
+            file_path = os.path.join(MODEL_FOLDER, filename)
+            file.save(file_path)
+
             logger.info(f"Model uploaded successfully: {filename}")
-            return jsonify({"status": "success", "message": "Model uploaded successfully"})
+            return jsonify({
+                "status": "success",
+                "message": "Model uploaded successfully",
+                "filename": filename,
+                "type": model_type
+            })
 
         return jsonify({"status": "error", "message": "Invalid file type"}), 400
     except Exception as e:
         logger.error(f"Error uploading model: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/delete_model/<filename>', methods=['DELETE'])
+def delete_model(filename):
+    try:
+        file_path = os.path.join(MODEL_FOLDER, secure_filename(filename))
+        if os.path.exists(file_path):
+            os.remove(file_path)
+            logger.info(f"Model deleted successfully: {filename}")
+            return jsonify({"status": "success", "message": "Model deleted successfully"})
+        return jsonify({"status": "error", "message": "Model not found"}), 404
+    except Exception as e:
+        logger.error(f"Error deleting model: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/test_model', methods=['POST'])
+def test_model():
+    try:
+        if 'audio' not in request.files or 'model' not in request.form:
+            return jsonify({"status": "error", "message": "Missing audio file or model selection"}), 400
+
+        audio_file = request.files['audio']
+        model_name = request.form['model']
+
+        if audio_file.filename == '' or not allowed_file(audio_file.filename, ALLOWED_AUDIO_EXTENSIONS):
+            return jsonify({"status": "error", "message": "Invalid audio file"}), 400
+
+        # Save audio file temporarily
+        audio_filename = secure_filename(audio_file.filename)
+        audio_path = os.path.join(AUDIO_FOLDER, audio_filename)
+        audio_file.save(audio_path)
+
+        # Load model and perform test
+        model_path = os.path.join(MODEL_FOLDER, secure_filename(model_name))
+
+        # Placeholder for model testing logic
+        test_results = {
+            "model_name": model_name,
+            "audio_file": audio_filename,
+            "detection_confidence": 0.85,
+            "processing_time_ms": 150,
+            "detected_frequencies": [2000, 4000, 6000],
+            "status": "success"
+        }
+
+        return jsonify({
+            "status": "success",
+            "results": test_results
+        })
+
+    except Exception as e:
+        logger.error(f"Error testing model: {str(e)}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+@app.route('/models', methods=['GET'])
+def list_models():
+    try:
+        models = []
+        for filename in os.listdir(MODEL_FOLDER):
+            if allowed_file(filename, ALLOWED_MODEL_EXTENSIONS):
+                file_ext = filename.rsplit('.', 1)[1].lower()
+                model_type = {
+                    'onnx': 'ONNX Model',
+                    'pt': 'PyTorch Model',
+                    'pth': 'PyTorch Model',
+                    'tflite': 'TensorFlow Lite Model'
+                }.get(file_ext, 'Unknown')
+
+                models.append({
+                    "name": filename,
+                    "type": model_type
+                })
+
+        return jsonify({"status": "success", "models": models})
+    except Exception as e:
+        logger.error(f"Error listing models: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/upload_audio', methods=['POST'])
@@ -73,15 +162,6 @@ def upload_audio():
         return jsonify({"status": "error", "message": "Invalid file type"}), 400
     except Exception as e:
         logger.error(f"Error uploading audio: {str(e)}")
-        return jsonify({"status": "error", "message": str(e)}), 500
-
-@app.route('/models', methods=['GET'])
-def list_models():
-    try:
-        models = [f for f in os.listdir(MODEL_FOLDER) if allowed_file(f, ALLOWED_MODEL_EXTENSIONS)]
-        return jsonify({"status": "success", "models": models})
-    except Exception as e:
-        logger.error(f"Error listing models: {str(e)}")
         return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route('/audio_files', methods=['GET'])

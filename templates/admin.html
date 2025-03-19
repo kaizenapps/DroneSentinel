@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Kaizen Labs Project Uriel</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+</head>
+<body class="bg-gray-900 text-white font-roboto">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-6xl mx-auto">
+            <!-- Header -->
+            <div class="flex justify-between items-center mb-8">
+                <h1 class="text-4xl font-bold">Admin Panel</h1>
+                <a href="/" class="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded-lg flex items-center">
+                    <span class="material-icons mr-2">arrow_back</span>
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Model Management Section -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="material-icons mr-2">model_training</span>
+                        Model Management
+                    </h2>
+
+                    <!-- Model Upload -->
+                    <div class="mb-8">
+                        <h3 class="text-xl mb-4">Upload New Model</h3>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <form id="modelUploadForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Model Type</label>
+                                    <select id="modelType" class="w-full bg-gray-800 rounded-lg px-4 py-2 border border-gray-600">
+                                        <option value="onnx">ONNX Model</option>
+                                        <option value="pytorch">PyTorch Model</option>
+                                        <option value="tflite">TensorFlow Lite Model</option>
+                                    </select>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Model File</label>
+                                    <div class="flex items-center space-x-4">
+                                        <input type="file" id="modelFile" class="hidden" accept=".onnx,.pt,.tflite">
+                                        <button type="button" onclick="document.getElementById('modelFile').click()" 
+                                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center">
+                                            <span class="material-icons mr-2">upload_file</span>
+                                            Select File
+                                        </button>
+                                        <span id="modelFileName" class="text-gray-400"></span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg flex items-center justify-center">
+                                    <span class="material-icons mr-2">save</span>
+                                    Upload Model
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Model List -->
+                    <div>
+                        <h3 class="text-xl mb-4">Available Models</h3>
+                        <div id="modelList" class="space-y-2">
+                            <!-- Models will be populated here -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testing Section -->
+                <div class="bg-gray-800 rounded-lg p-6">
+                    <h2 class="text-2xl font-bold mb-6 flex items-center">
+                        <span class="material-icons mr-2">science</span>
+                        Model Testing
+                    </h2>
+
+                    <!-- Test Configuration -->
+                    <div class="mb-8">
+                        <h3 class="text-xl mb-4">Test Configuration</h3>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <form id="testConfigForm" class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Select Model</label>
+                                    <select id="testModel" class="w-full bg-gray-800 rounded-lg px-4 py-2 border border-gray-600">
+                                        <!-- Models will be populated here -->
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label class="block text-sm font-medium mb-2">Test Audio File</label>
+                                    <div class="flex items-center space-x-4">
+                                        <input type="file" id="testAudioFile" class="hidden" accept="audio/*">
+                                        <button type="button" onclick="document.getElementById('testAudioFile').click()"
+                                                class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center">
+                                            <span class="material-icons mr-2">audio_file</span>
+                                            Select Audio
+                                        </button>
+                                        <span id="audioFileName" class="text-gray-400"></span>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center justify-center">
+                                    <span class="material-icons mr-2">play_arrow</span>
+                                    Run Test
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Test Results -->
+                    <div>
+                        <h3 class="text-xl mb-4">Test Results</h3>
+                        <div class="bg-gray-700 rounded-lg p-4">
+                            <div id="testResults" class="font-mono text-sm whitespace-pre-wrap">
+                                No test results available
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Console Output -->
+            <div class="mt-8 bg-gray-800 rounded-lg p-6">
+                <h2 class="text-2xl font-bold mb-4 flex items-center">
+                    <span class="material-icons mr-2">terminal</span>
+                    Console Output
+                </h2>
+                <div id="consoleOutput" class="bg-gray-900 rounded-lg p-4 h-64 overflow-y-auto font-mono text-sm">
+                    <div id="consoleContent" class="space-y-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/admin.js"></script>
+</body>
+</html>
