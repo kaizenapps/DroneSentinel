@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     let mediaStream = null;
     let analyser = null;
     let canvasCtx = null;
+    let animationFrame = null;
 
     // UI Elements
     const listenBtn = document.getElementById('listenBtn');
@@ -45,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
         function drawSpectrogram() {
             if (!isListening) return;
 
-            requestAnimationFrame(drawSpectrogram);
+            animationFrame = requestAnimationFrame(drawSpectrogram);
             analyser.getByteFrequencyData(dataArray);
 
             // Scroll the existing spectrogram left
@@ -61,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Use a color gradient from blue (low intensity) to red (high intensity)
                 const hue = (1 - intensity) * 240; // 240 is blue, 0 is red
                 canvasCtx.fillStyle = `hsl(${hue}, 100%, ${intensity * 50}%)`;
-                canvasCtx.fillRect(spectrogramCanvas.width - 1, spectrogramCanvas.height - y, 1, 2);
+                canvasCtx.fillRect(spectrogramCanvas.width - 1, spectrogramCanvas.height - y, 1, 1);
             }
         }
 
@@ -76,6 +77,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const source = audioContext.createMediaStreamSource(mediaStream);
             analyser = audioContext.createAnalyser();
             const processor = audioContext.createScriptProcessor(1024, 1, 1);
+
+            // Configure analyser
+            analyser.smoothingTimeConstant = 0.8;
+            analyser.minDecibels = -90;
+            analyser.maxDecibels = -10;
 
             // Connect nodes in sequence
             source.connect(analyser);
@@ -113,6 +119,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (audioContext) {
             audioContext.close();
+        }
+        if (animationFrame) {
+            cancelAnimationFrame(animationFrame);
+        }
+
+        // Clear canvas
+        if (canvasCtx) {
+            canvasCtx.clearRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+            canvasCtx.fillStyle = 'rgb(0, 0, 0)';
+            canvasCtx.fillRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
         }
 
         // Update UI
