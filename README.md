@@ -1,4 +1,4 @@
-# 🎯 Project Uriel - Drone Audio Detection System
+# 🎯 DroneSentinel - Drone Audio Detection System
 
 > Developed by [KaizenApps.com](https://KaizenApps.com) for [KaizenLabs.uk](https://KaizenLabs.uk)
 
@@ -164,7 +164,6 @@ Contributions are welcome! Please read our [Contributing Guidelines](CONTRIBUTIN
 For support or queries:
 - 📧 Email: support@kaizenlabs.uk
 - 🌐 Website: https://kaizenlabs.uk
-- 💬 Twitter: [@KaizenLabsUK](https://twitter.com/KaizenLabsUK)
 
 ---
 
