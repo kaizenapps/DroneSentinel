@@ -67,12 +67,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         drawSpectrogram();
+        addLog('Spectrogram visualization initialized');
     }
 
     async function startListening() {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            addLog('Microphone access granted');
 
             const source = audioContext.createMediaStreamSource(mediaStream);
             analyser = audioContext.createAnalyser();
