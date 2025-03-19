@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let startTime = null;
     let audioContext = null;
     let mediaStream = null;
+    let analyser = null;
+    let canvasCtx = null;
 
     // UI Elements
     const listenBtn = document.getElementById('listenBtn');
@@ -14,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const confidenceText = document.getElementById('confidenceText');
     const alertBox = document.getElementById('alertBox');
     const logContent = document.getElementById('logContent');
+    const spectrogramCanvas = document.getElementById('spectrogram');
 
     function addLog(message, type = 'info') {
         const logEntry = document.createElement('div');
@@ -24,6 +27,39 @@ document.addEventListener('DOMContentLoaded', function() {
         logContent.scrollTop = logContent.scrollHeight;
     }
 
+    // Initialize spectrogram
+    function initSpectrogram() {
+        canvasCtx = spectrogramCanvas.getContext('2d');
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 2048;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        canvasCtx.clearRect(0, 0, spectrogramCanvas.width, spectrogramCanvas.height);
+
+        function drawSpectrogram() {
+            if (!isListening) return;
+
+            requestAnimationFrame(drawSpectrogram);
+            analyser.getByteFrequencyData(dataArray);
+
+            // Scroll the existing spectrogram left
+            const imageData = canvasCtx.getImageData(1, 0, spectrogramCanvas.width - 1, spectrogramCanvas.height);
+            canvasCtx.putImageData(imageData, 0, 0);
+
+            // Draw new column
+            for (let i = 0; i < bufferLength; i++) {
+                const value = dataArray[i];
+                const y = spectrogramCanvas.height - (i / bufferLength) * spectrogramCanvas.height;
+                const intensity = value / 255;
+                canvasCtx.fillStyle = `hsl(${240 - intensity * 240}, 100%, ${intensity * 100}%)`;
+                canvasCtx.fillRect(spectrogramCanvas.width - 1, y, 1, 2);
+            }
+        }
+
+        drawSpectrogram();
+    }
+
     async function startListening() {
         try {
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -32,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
             const source = audioContext.createMediaStreamSource(mediaStream);
             const processor = audioContext.createScriptProcessor(1024, 1, 1);
 
-            source.connect(processor);
+            source.connect(analyser);
+            analyser.connect(processor);
             processor.connect(audioContext.destination);
 
             processor.onaudioprocess = function(e) {
@@ -42,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             startTime = Date.now();
             updateUptime();
+            initSpectrogram();
 
             // Update UI
             isListening = true;

@@ -112,6 +112,21 @@ graph TD
     E --> F[Deploy Model]
 ```
 
+## 🎓 Model Training
+
+### Using Teachable Machine
+1. Visit [Teachable Machine](https://teachablemachine.withgoogle.com/train) and select the "Audio Project" option
+2. Record background noise samples (minimum 20 seconds)
+3. Create classes for different drone types
+4. Record multiple samples for each drone type (minimum 8 samples)
+5. Train the model
+6. Export the model in your preferred format (TensorFlow.js, TensorFlow Lite, or Python)
+
+### Upcoming Features
+- [ ] Add example models for common drone types
+- [ ] Improve real-time audio processing optimization
+- [ ] Enhance statistics and visualization features
+
 ## 🌟 Major Inspirations
 
 This project builds upon and improves the work from:
