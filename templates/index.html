@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drone Audio Detection System</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="/static/css/custom.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body class="bg-gray-900 text-white">
+    <div class="container mx-auto px-4 py-8">
+        <div class="max-w-3xl mx-auto">
+            <h1 class="text-4xl font-bold mb-8 text-center">Drone Audio Detection System</h1>
+            
+            <div class="bg-gray-800 rounded-lg p-6 mb-8">
+                <div class="flex justify-between items-center mb-6">
+                    <button id="listenBtn" class="btn btn-primary px-6 py-3 rounded-lg">
+                        Start Listening
+                    </button>
+                    
+                    <div class="flex space-x-4">
+                        <select id="modelSelect" class="bg-gray-700 rounded-lg px-4 py-2">
+                            <option value="fpv">FPV Drone</option>
+                            <option value="shahed">Shahed Drone</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <h3 class="text-xl mb-2">Status</h3>
+                        <p id="statusText" class="text-green-400">Idle</p>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <h3 class="text-xl mb-2">Uptime</h3>
+                        <p id="uptimeText">00:00:00</p>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <h3 class="text-xl mb-2">Detection Confidence</h3>
+                        <div class="w-full bg-gray-600 rounded-full h-4">
+                            <div id="confidenceBar" class="bg-blue-500 rounded-full h-4" style="width: 0%"></div>
+                        </div>
+                        <p id="confidenceText" class="mt-2">0%</p>
+                    </div>
+                    
+                    <div class="bg-gray-700 rounded-lg p-4">
+                        <h3 class="text-xl mb-2">Current Model</h3>
+                        <p id="currentModelText">FPV Drone</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="alertBox" class="hidden bg-red-600 rounded-lg p-6 text-center">
+                <h2 class="text-2xl font-bold mb-2">⚠️ ALERT</h2>
+                <p id="alertText" class="text-xl">Drone Detected!</p>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/js/main.js"></script>
+</body>
+</html>
