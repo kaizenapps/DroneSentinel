@@ -1,13 +1,9 @@
-.btn-primary {
-    background-color: var(--bs-primary);
-    border-color: var(--bs-primary);
+/* Base styles */
+body {
+    font-family: 'Roboto', sans-serif;
 }
 
-.btn-primary:hover {
-    background-color: var(--bs-primary-dark);
-    border-color: var(--bs-primary-dark);
-}
-
+/* Alert animation */
 .alert-animation {
     animation: pulse 2s infinite;
 }
@@ -25,4 +21,40 @@
         transform: scale(1);
         opacity: 1;
     }
+}
+
+/* Log styles */
+#logContainer::-webkit-scrollbar {
+    width: 8px;
+}
+
+#logContainer::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    border-radius: 4px;
+}
+
+#logContainer::-webkit-scrollbar-thumb {
+    background: #4a4a4a;
+    border-radius: 4px;
+}
+
+#logContainer::-webkit-scrollbar-thumb:hover {
+    background: #5a5a5a;
+}
+
+/* Admin panel styles */
+.model-item {
+    @apply flex items-center justify-between p-3 bg-gray-800 rounded-lg;
+}
+
+.model-item:hover {
+    @apply bg-gray-700;
+}
+
+.audio-item {
+    @apply flex items-center justify-between p-3 bg-gray-800 rounded-lg;
+}
+
+.audio-item:hover {
+    @apply bg-gray-700;
 }
