@@ -15,10 +15,10 @@
         <div class="max-w-4xl mx-auto">
             <div class="flex justify-between items-center mb-8">
                 <h1 class="text-4xl font-bold">Kaizen Labs Project Uriel</h1>
-                <button id="adminBtn" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center">
+                <a href="/admin" class="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg flex items-center">
                     <span class="material-icons mr-2">admin_panel_settings</span>
                     Admin Panel
-                </button>
+                </a>
             </div>
 
             <div class="bg-gray-800 rounded-lg p-6 mb-8">
@@ -74,56 +74,6 @@
             <div id="alertBox" class="hidden bg-red-600 rounded-lg p-6 text-center">
                 <h2 class="text-2xl font-bold mb-2">⚠️ ALERT</h2>
                 <p id="alertText" class="text-xl">Drone Detected!</p>
-            </div>
-
-            <!-- Admin Panel Modal -->
-            <div id="adminPanel" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                <div class="bg-gray-800 rounded-lg p-6 max-w-2xl w-full mx-4">
-                    <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-2xl font-bold">Admin Panel</h2>
-                        <button id="closeAdminBtn" class="text-gray-400 hover:text-white">
-                            <span class="material-icons">close</span>
-                        </button>
-                    </div>
-
-                    <div class="space-y-6">
-                        <!-- Model Management -->
-                        <div class="bg-gray-700 rounded-lg p-4">
-                            <h3 class="text-xl mb-4">Model Management</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-4">
-                                    <input type="file" id="modelUpload" class="hidden" accept=".tflite,.onnx">
-                                    <button onclick="document.getElementById('modelUpload').click()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center">
-                                        <span class="material-icons mr-2">upload_file</span>
-                                        Upload Model
-                                    </button>
-                                    <span id="uploadFileName" class="text-gray-400"></span>
-                                </div>
-                                <div id="modelList" class="space-y-2">
-                                    <!-- Model list will be populated dynamically -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Test Audio -->
-                        <div class="bg-gray-700 rounded-lg p-4">
-                            <h3 class="text-xl mb-4">Test Audio Files</h3>
-                            <div class="space-y-4">
-                                <div class="flex items-center space-x-4">
-                                    <input type="file" id="audioUpload" class="hidden" accept="audio/*">
-                                    <button onclick="document.getElementById('audioUpload').click()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center">
-                                        <span class="material-icons mr-2">audio_file</span>
-                                        Upload Audio
-                                    </button>
-                                    <span id="audioFileName" class="text-gray-400"></span>
-                                </div>
-                                <div id="audioList" class="space-y-2">
-                                    <!-- Audio file list will be populated dynamically -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>

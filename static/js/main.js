@@ -14,11 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const confidenceText = document.getElementById('confidenceText');
     const alertBox = document.getElementById('alertBox');
     const logContent = document.getElementById('logContent');
-    const adminBtn = document.getElementById('adminBtn');
-    const adminPanel = document.getElementById('adminPanel');
-    const closeAdminBtn = document.getElementById('closeAdminBtn');
-    const modelUpload = document.getElementById('modelUpload');
-    const audioUpload = document.getElementById('audioUpload');
 
     function addLog(message, type = 'info') {
         const logEntry = document.createElement('div');
@@ -122,69 +117,6 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => {
                 console.error('Error:', error);
                 addLog('Error switching model: ' + error.message, 'error');
-            });
-        }
-    });
-
-    // Admin Panel
-    adminBtn.addEventListener('click', () => {
-        adminPanel.classList.remove('hidden');
-    });
-
-    closeAdminBtn.addEventListener('click', () => {
-        adminPanel.classList.add('hidden');
-    });
-
-    modelUpload.addEventListener('change', function(e) {
-        if (this.files.length > 0) {
-            const file = this.files[0];
-            document.getElementById('uploadFileName').textContent = file.name;
-
-            const formData = new FormData();
-            formData.append('model', file);
-
-            fetch('/upload_model', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    addLog(`Successfully uploaded model: ${file.name}`);
-                    updateModelList();
-                } else {
-                    addLog(`Error uploading model: ${data.message}`, 'error');
-                }
-            })
-            .catch(error => {
-                addLog(`Error uploading model: ${error.message}`, 'error');
-            });
-        }
-    });
-
-    audioUpload.addEventListener('change', function(e) {
-        if (this.files.length > 0) {
-            const file = this.files[0];
-            document.getElementById('audioFileName').textContent = file.name;
-
-            const formData = new FormData();
-            formData.append('audio', file);
-
-            fetch('/upload_audio', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    addLog(`Successfully uploaded audio: ${file.name}`);
-                    updateAudioList();
-                } else {
-                    addLog(`Error uploading audio: ${data.message}`, 'error');
-                }
-            })
-            .catch(error => {
-                addLog(`Error uploading audio: ${error.message}`, 'error');
             });
         }
     });
