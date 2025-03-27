@@ -6,6 +6,9 @@
 
 Project Uriel is a cutting-edge web-based drone detection system that uses audio processing and machine learning to identify and classify drone sounds in real-time. The system specializes in detecting FPV drones and Shahed-type drones through their unique acoustic signatures.
 
+![{4BE0C097-894A-438B-9391-69F3045F805E}](https://github.com/user-attachments/assets/98f03e2c-6f4e-451f-b6ab-dd3230b5d586)
+
+
 ## 🎥 Demo
 
 ![Demo](demo.gif)
